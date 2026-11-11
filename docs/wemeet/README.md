@@ -23,6 +23,8 @@ runnable reference implementation lives in [`web/`](../../web) and
 
 The status bar always shows WeMeet at the top left, the time in the center ("--:--" before clock sync), and signal/battery at the right.
 
+Normal H5/PC setup sends Wi-Fi and the binding token directly; no preparation/server-address command is required. Server-address transmission is an independent debug-only action. The built-in production default is used when no device-specific server override is saved.
+
 Keys (UP / DOWN / OK):
 
 | Context | UP / DOWN | OK click | OK long press |
@@ -264,8 +266,8 @@ node tools/wm_mock_server.mjs          # prints LAN URLs for the phone page, des
 
 1. After flashing, the device rests on the welcome page; press OK to start listening.
 2. Open the printed `/h5` URL on a phone and send the mock server URL to the device with
-   the "server URL" field (the firmware default is the placeholder
-   `https://api.wemeet.example`, set by `CONFIG_WM_API_BASE`).
+   the "server URL" field (the built-in production default is
+   `https://api-global.wemeet.com`, set by `CONFIG_WM_API_BASE`).
 3. Enter listening again, fill in the Wi-Fi credentials, tap send, and wait for the
    device to show the binding success page.
 4. Open `/pc` on a computer and try locate, message, push notice, and unbind.

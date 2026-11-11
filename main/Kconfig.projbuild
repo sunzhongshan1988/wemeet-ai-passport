@@ -2,7 +2,7 @@ menu "WeMeet Passport"
 
     config WM_API_BASE
         string "WeMeet Next server base URL"
-        default "https://api.wemeet.example"
+        default "https://api-global.wemeet.com"
         help
             Base URL of the WeMeet Next backend, without a trailing slash. The device
             calls <base>/device/v1/... (see docs/wemeet/device-api.md).
