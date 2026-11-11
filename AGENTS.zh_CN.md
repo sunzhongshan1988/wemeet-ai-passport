@@ -49,9 +49,10 @@
 | 应用工作流或核心技能配置 | `skills/README.zh_CN.md`；确认五个必需技能可用，再使用匹配当前任务的技能 |
 | 环境引导或缺少工具链 | `docs/development/engineering/environment-setup.zh_CN.md` |
 | BSP、引脚、总线、显示、音频、电池 | `docs/hardware-design/AI_HARDWARE_DEVELOPMENT_GUIDE.zh_CN.md`、`components/bsp/include/bsp_pins.h` |
-| Demo 或菜单 | `main/demo.h`、`main/main.c`、最近的 `main/demo_*.c` 实现 |
+| WeMeet 应用:页面、按键、状态机 | `docs/wemeet/README.zh_CN.md`、`main/wm_app.c`、`main/wm_ui.h` |
+| 声波命令、绑定或云端接口 | `docs/wemeet/README.zh_CN.md`、`main/wm_sonic.h`、`main/wm_proto.h`、`main/wm_cloud.h`、`web/sonic/`、`tools/wm_mock_server.mjs` |
 | 中文 UI 或字体 | `docs/development/engineering/lvgl-chinese-fonts.zh_CN.md`、应用字体素材、配置与控件样式 |
-| Wi-Fi 联网或蓝牙配网 | `docs/development/engineering/wifi-provisioning.zh_CN.md`、其中引用的 `demo/blufi-provisioning` 实现 |
+| Wi-Fi 联网 | `main/wm_net.h`(本固件通过声波配网,不使用蓝牙;`docs/development/engineering/wifi-provisioning.zh_CN.md` 仅描述上游 BLUFI 参考) |
 | 构建、测试、依赖、分区 | `docs/development/engineering/build-and-test.zh_CN.md`、`docs/development/engineering/firmware-layout.zh_CN.md`、`sdkconfig.defaults`、`partitions.csv` |
 | CI 或发布 | `docs/development/ci/CI-*.zh_CN.md` 中的对应文件与 `.github/workflows/` |
 | 项目开发完成 | `docs/development/release/project-completion.zh_CN.md`（再进入 `issue-suggestions` 或 `experience-pr` skill） |

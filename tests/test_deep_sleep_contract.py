@@ -53,7 +53,6 @@ class DeepSleepContractTest(unittest.TestCase):
         cls.battery = read("components/bsp/src/bsp_battery.c")
         cls.display = read("components/bsp/src/bsp_display.c")
         cls.i2c = read("components/bsp/src/bsp_i2c.c")
-        cls.demo = read("main/demo_low_power.c")
 
     def test_es8311_force_sleep_sequence_is_complete_and_ordered(self) -> None:
         expected = [
@@ -137,21 +136,6 @@ class DeepSleepContractTest(unittest.TestCase):
         init = function_body(self.display, "bsp_display_init")
         self.assertLess(init.index("display_release_deep_sleep_holds()"),
                         init.index("spi_bus_initialize"))
-
-    def test_terminal_shutdown_order_precedes_deep_sleep(self) -> None:
-        body = function_body(self.demo, "sleep_task")
-        calls = [
-            "bsp_battery_sleep()",
-            "bsp_audio_sleep()",
-            "bsp_audio_prepare_deep_sleep()",
-            "bsp_i2c_prepare_deep_sleep()",
-            "bsp_display_prepare_deep_sleep()",
-            "esp_deep_sleep_start()",
-        ]
-        positions = [body.index(call) for call in calls]
-        self.assertEqual(positions, sorted(positions))
-        self.assertLess(body.index("bsp_lvgl_lock(1000)"),
-                        body.index("bsp_display_prepare_deep_sleep()"))
 
 
 if __name__ == "__main__":

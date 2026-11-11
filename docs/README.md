@@ -30,6 +30,12 @@
 
 ---
 
+> **This repository is the WeMeet Passport firmware.** It builds on the open FoloToy AI
+> Passport hardware and BSP; the application layer has been replaced with the dedicated
+> WeMeet Next device (attendee badge, sonic provisioning and binding, remote management).
+> Start with the [WeMeet Passport documentation](wemeet/README.md); the text below
+> introduces the upstream hardware platform.
+
 **FoloToy AI Passport** is an open wearable AI platform made for people to shape,
 remix, and create. Start with a simple idea, build your own experience, and make
 it anything—from a pocket companion to something no one has imagined yet.
@@ -207,6 +213,7 @@ provide reference material. Choose the entry that matches your task.
 | --- | --- |
 | [Development](development/README.md) | AI workflow, engineering conventions, CI, and release guidance |
 | [AI skills](../skills/README.md) | Development, environment setup, builds, device testing, and debugging |
+| [WeMeet Passport](wemeet/README.md) | This fork's application: device behavior, sonic protocol, binding design, and the device API contract |
 | [Hardware](hardware-design/README.md) | Board facts, interface boundaries, acceptance checklists, and troubleshooting |
 | [Chinese fonts](development/engineering/lvgl-chinese-fonts.md) | Glyph coverage, widget font selection, and blank-text troubleshooting |
 | [Wi-Fi provisioning](development/engineering/wifi-provisioning.md) | Bluetooth provisioning reference and companion mini program |

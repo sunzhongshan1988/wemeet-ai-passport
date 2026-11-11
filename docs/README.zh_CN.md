@@ -30,6 +30,10 @@
 
 ---
 
+> **本仓库是 WeMeet Passport 固件**：基于 FoloToy AI Passport 开源硬件与 BSP，应用层已整体替换为
+> WeMeet Next 的专属设备(电子参会证、声波配网与绑定、远程管理)。从
+> [WeMeet Passport 文档](wemeet/README.zh_CN.md)开始阅读；下文是上游硬件平台的介绍。
+
 **FoloToy AI Passport** 是开放的可穿戴 AI 平台，人人都可以动手改造、自由创作。
 从一个简单想法开始，打造专属体验——无论是随身伙伴、小工具、游戏，还是任何新点子。
 
@@ -201,6 +205,7 @@ LICENSE                  仓库许可证
 | --- | --- |
 | [开发指南](development/README.zh_CN.md) | AI 工作流、工程规范、CI 与发布流程 |
 | [AI 技能](../skills/README.zh_CN.md) | 开发、环境准备、构建、真机测试与故障诊断 |
+| [WeMeet Passport](wemeet/README.zh_CN.md) | 本仓库的应用:设备行为、声波协议、绑定设计与设备接口契约 |
 | [硬件资料](hardware-design/README.zh_CN.md) | 板卡事实、接口边界、验收清单与排障 |
 | [中文字体](development/engineering/lvgl-chinese-fonts.zh_CN.md) | 字形覆盖、控件字体选择，以及中文空白排查 |
 | [Wi-Fi 配网](development/engineering/wifi-provisioning.zh_CN.md) | 蓝牙配网实现参考与配套小程序 |

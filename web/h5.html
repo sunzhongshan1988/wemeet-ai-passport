@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WeMeet · 添加设备</title>
+<link rel="stylesheet" href="wm.css">
+<style>
+  main { max-width: 420px; margin: 0 auto; padding: 20px 16px 40px; }
+  .orb { width: 72px; height: 72px; border-radius: 50%; margin: 8px auto 12px; background: linear-gradient(180deg, var(--ai-light), var(--ai)); box-shadow: 0 0 36px -4px var(--glow); }
+  .orb.playing { animation: pulse 0.8s ease-in-out infinite alternate; }
+  @keyframes pulse { to { transform: scale(1.12); } }
+  .bar { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; margin-top: 12px; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--ai); }
+  #status { text-align: center; min-height: 42px; margin-top: 10px; }
+  .row { display: flex; gap: 8px; margin-top: 10px; }
+  .row > * { flex: 1; }
+  ol { padding-left: 18px; margin: 0; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>添加设备</h1>
+  <p class="sub">用声音把 Wi-Fi 和你的账号发给 WeMeet Passport。</p>
+
+  <div class="card">
+    <ol>
+      <li>设备上按 <b>OK</b>(已在主界面时长按 OK),进入「正在聆听」</li>
+      <li>手机取消静音,媒体音量调到最大</li>
+      <li>填好 Wi-Fi 后点发送,把手机扬声器靠近设备</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <label for="ssid">Wi-Fi 名称(仅支持 2.4G)</label>
+    <input id="ssid" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="32">
+    <label for="password">Wi-Fi 密码</label>
+    <input id="password" type="password" autocomplete="off" maxlength="64">
+    <div class="orb" id="orb"></div>
+    <button class="primary" id="send" style="width:100%">发送到设备</button>
+    <div class="bar"><i id="progress"></i></div>
+    <div id="status" class="muted"></div>
+  </div>
+
+  <div class="card">
+    <div class="muted">其他命令</div>
+    <div class="row">
+      <button id="bindOnly">仅绑定账号</button>
+      <button id="reset">恢复出厂</button>
+    </div>
+    <label for="text">在设备上显示文本</label>
+    <div class="row"><input id="text" maxlength="30" placeholder="你好,WeMeet"><button id="sendText" style="flex:0 0 72px">发送</button></div>
+    <label for="server">服务器地址(联调用)</label>
+    <div class="row"><input id="server" class="mono"><button id="sendServer" style="flex:0 0 72px">发送</button></div>
+  </div>
+</main>
+
+<script type="module">
+import { playFrame, frameSeconds } from './sonic/wm-sonic.js';
+import { encodeProvision, encodeBind, encodeReset, encodeMessage, encodeServer } from './sonic/wm-proto.js';
+
+const $ = (id) => document.getElementById(id);
+const status = (text, color = 'var(--muted)') => { $('status').textContent = text; $('status').style.color = color; };
+$('ssid').value = localStorage.getItem('wm.ssid') ?? '';   // 只记 Wi-Fi 名,不记密码
+$('server').value = location.origin;
+
+let playing = null;
+let pollTimer = null;
+
+async function api(method, path, body) {
+  const response = await fetch(path, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error?.message ?? `HTTP ${response.status}`);
+  return data;
+}
+
+// 播放一条命令(重复 3 遍)。必须由点击触发,否则浏览器不允许出声。
+async function transmit(payload, label) {
+  playing?.stop();
+  $('orb').classList.add('playing');
+  status(`${label}:正在发送(每遍约 ${frameSeconds(payload.length).toFixed(0)} 秒,共 3 遍)`);
+  playing = await playFrame(payload, { repeat: 3, onProgress: (f) => { $('progress').style.width = `${f * 100}%`; } });
+  const mine = playing;
+  mine.done.then(() => { if (playing === mine) { $('orb').classList.remove('playing'); playing = null; } });
+  return mine;
+}
+
+// 轮询绑定会话:设备联网并认领后,服务器会把会话标成 claimed。
+function watchSession(id) {
+  clearInterval(pollTimer);
+  const started = Date.now();
+  pollTimer = setInterval(async () => {
+    try {
+      const session = await api('GET', `/api/devices/bind-sessions/${id}`);
+      if (session.status === 'claimed') {
+        clearInterval(pollTimer);
+        playing?.stop();
+        status(`绑定成功:${session.device.name}`, 'var(--ok)');
+      } else if (session.status === 'expired' || Date.now() - started > 120000) {
+        clearInterval(pollTimer);
+        status('设备没有上线。请看设备屏幕上的提示,确认 Wi-Fi 密码后重试。', 'var(--danger)');
+      }
+    } catch { /* 网络抖动:下一轮再试 */ }
+  }, 2000);
+}
+
+async function run(action) {
+  try { await action(); } catch (error) { $('orb').classList.remove('playing'); status(error.message, 'var(--danger)'); }
+}
+
+$('send').onclick = () => run(async () => {
+  const ssid = $('ssid').value.trim();
+  if (!ssid) throw new Error('请填写 Wi-Fi 名称');
+  localStorage.setItem('wm.ssid', ssid);
+  const session = await api('POST', '/api/devices/bind-sessions');
+  const sound = await transmit(encodeProvision({ ssid, password: $('password').value, token: session.token }), '配网并绑定');
+  watchSession(session.id);
+  sound.done.then(() => { if ($('status').style.color !== 'var(--ok)') status('已发送,等待设备联网…'); });
+});
+$('bindOnly').onclick = () => run(async () => {
+  const session = await api('POST', '/api/devices/bind-sessions');
+  await transmit(encodeBind({ token: session.token }), '绑定账号');
+  watchSession(session.id);
+});
+$('reset').onclick = () => run(() => transmit(encodeReset(), '恢复出厂(需在设备上确认)'));
+$('sendText').onclick = () => run(() => transmit(encodeMessage({ text: $('text').value || '你好,WeMeet' }), '显示文本'));
+$('sendServer').onclick = () => run(() => transmit(encodeServer({ url: $('server').value.trim() }), '设置服务器'));
+</script>
+</body>
+</html>

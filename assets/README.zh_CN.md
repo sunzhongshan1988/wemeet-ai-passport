@@ -15,6 +15,22 @@
 - 添加字库前评估 Flash 与内部 RAM 影响；ESP32-C3 无 PSRAM。
 - 不提交许可不允许分发的字库。
 
+| 文件 | 规格 | 用途、来源与许可 |
+| --- | --- | --- |
+| [`fonts/wm_font_16.c`](fonts/wm_font_16.c) + `wm_font_16.bin` | 16 px，4 bpp，7001 字形，位图 870 KB | 界面文字。ASCII 取自 Inter Medium；标点与 GB2312 全部 6763 个汉字取自 Noto Sans CJK SC Medium。 |
+| [`fonts/wm_font_16_ext.c`](fonts/wm_font_16_ext.c) + `wm_font_16_ext.bin` | 16 px，2 bpp，14139 字形，位图 905 KB | 生僻姓名字的回退字库：U+4E00..U+9FA5 中 GB2312 以外的部分，Noto Sans CJK SC Medium。 |
+| [`fonts/wm_font_28.c`](fonts/wm_font_28.c) + `wm_font_28.bin` | 28 px，2 bpp，7001 字形，位图 1.3 MB | 大标题与参会人姓名。ASCII 取自 Inter SemiBold；GB2312 取自 Noto Sans CJK SC Bold。需要 `CONFIG_LV_FONT_FMT_TXT_LARGE=y`。 |
+
+Inter 与 Noto Sans CJK 均以 SIL Open Font License 1.1 发布，允许嵌入与再分发。文件由
+[`tools/gen_wm_fonts.py`](../tools/gen_wm_fonts.py) 生成（Pillow 12.3 与 fontTools；在仓库
+根目录执行 `python3 tools/gen_wm_fonts.py --inter-dir <目录> --noto-dir <目录>`），格式为
+LVGL 9.5 `fmt_txt`。字形表是 C 源码；字形位图是二进制文件，经
+[`main/CMakeLists.txt`](../main/CMakeLists.txt) 的 `EMBED_FILES` 链接，常驻 Flash、不占 RAM。
+回退链为 `wm_font_28` -> `wm_font_16` -> `wm_font_16_ext` -> `lv_font_montserrat_14`。
+ASCII、所列标点和 U+4E00..U+9FA5 以外的字符显示为 LVGL 缺字占位框。
+[`tests/test_wm_font_coverage.py`](../tests/test_wm_font_coverage.py) 会检查固件界面文案中的
+每个字符都被字库覆盖。
+
 ## 图片（images）
 
 可复用的源图与生成的显示资产放在 `images/`。

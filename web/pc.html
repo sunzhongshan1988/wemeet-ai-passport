@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>WeMeet · 设备管理</title>
+<link rel="stylesheet" href="wm.css">
+<style>
+  main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+  header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 500; font-size: 12px; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  td.actions { text-align: right; white-space: nowrap; }
+  td.actions button { margin-left: 4px; }
+  .add { display: flex; gap: 8px; align-items: center; }
+  .add input { width: 140px; letter-spacing: 0.2em; text-align: center; }
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 8px; opacity: 0; transition: opacity 0.2s; }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>设备</h1>
+      <p class="sub" style="margin:0">管理绑定到你账号的 WeMeet Passport。</p>
+    </div>
+    <form class="add" id="add">
+      <input id="code" class="mono" inputmode="numeric" maxlength="6" placeholder="配对码" aria-label="配对码">
+      <button class="primary" style="height:36px">添加设备</button>
+    </form>
+  </header>
+  <div class="card" style="padding:4px 4px">
+    <table>
+      <thead><tr><th>设备</th><th>状态</th><th>电量</th><th>信号</th><th>固件</th><th>最近在线</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>还没有设备。在设备屏幕上找到 6 位配对码,填到右上角;或用手机「添加设备」通过声波绑定。</div>
+  </div>
+</main>
+<div id="toast" role="status"></div>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+function toast(text) {
+  $('toast').textContent = text;
+  $('toast').classList.add('show');
+  setTimeout(() => $('toast').classList.remove('show'), 2400);
+}
+
+async function api(method, path, body) {
+  const response = await fetch(path, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error?.message ?? `HTTP ${response.status}`);
+  return data;
+}
+
+function ago(timestamp) {
+  if (!timestamp) return '从未';
+  const seconds = Math.round((Date.now() - timestamp) / 1000);
+  return seconds < 60 ? `${seconds} 秒前` : seconds < 3600 ? `${Math.round(seconds / 60)} 分钟前` : `${Math.round(seconds / 3600)} 小时前`;
+}
+
+async function refresh() {
+  const { devices } = await api('GET', '/api/devices');
+  $('empty').hidden = devices.length > 0;
+  $('rows').innerHTML = devices.map((d) => `
+    <tr data-id="${escapeHtml(d.id)}">
+      <td><div>${escapeHtml(d.name)}</div><div class="mono muted">${escapeHtml(d.id)}</div></td>
+      <td><span class="dot ${d.online ? 'on' : ''}"></span>${d.online ? '在线' : '离线'}${d.pendingCommands ? ` · ${d.pendingCommands} 条待执行` : ''}</td>
+      <td>${d.battery == null || d.battery < 0 ? '—' : `${d.battery}%`}</td>
+      <td>${d.rssi ? `${d.rssi} dBm` : '—'}</td>
+      <td class="mono">${escapeHtml(d.firmware ?? '—')}</td>
+      <td class="muted">${ago(d.lastSeenAt)}</td>
+      <td class="actions">
+        <button data-act="locate">查找</button>
+        <button data-act="message">发消息</button>
+        <button data-act="notice">推送通知</button>
+        <button data-act="checkin">标记签到</button>
+        <button data-act="rename">重命名</button>
+        <button data-act="unbind" style="color:var(--danger)">解绑</button>
+      </td>
+    </tr>`).join('');
+}
+
+$('rows').onclick = async (event) => {
+  const act = event.target.dataset?.act;
+  if (!act) return;
+  const id = event.target.closest('tr').dataset.id;
+  try {
+    if (act === 'locate') { await api('POST', `/api/devices/${id}/commands`, { type: 'locate' }); toast('已下发,设备下次同步时响铃'); }
+    if (act === 'message') { const text = prompt('显示在设备屏幕上的文字(30 字以内)'); if (text) { await api('POST', `/api/devices/${id}/commands`, { type: 'message', text }); toast('已下发'); } }
+    if (act === 'notice') { const title = prompt('通知标题'); if (title) { await api('POST', `/api/devices/${id}/notices`, { title, body: prompt('通知内容') ?? '' }); toast('已推送'); } }
+    if (act === 'checkin') { await api('PATCH', `/api/devices/${id}`, { checkedIn: true }); toast('已标记为已签到'); }
+    if (act === 'rename') { const name = prompt('设备名称'); if (name) await api('PATCH', `/api/devices/${id}`, { name }); }
+    if (act === 'unbind' && confirm('解绑后设备会回到配对码界面,确定吗?')) { await api('DELETE', `/api/devices/${id}`); toast('已解绑'); }
+    await refresh();
+  } catch (error) { toast(error.message); }
+};
+
+$('add').onsubmit = async (event) => {
+  event.preventDefault();
+  try {
+    const { device } = await api('POST', '/api/devices/claim-by-code', { code: $('code').value });
+    $('code').value = '';
+    toast(`已添加 ${device.name}`);
+    await refresh();
+  } catch (error) { toast(error.message); }
+};
+
+// 设备屏幕上的二维码指向 /pc?c=<配对码>:扫码打开后自动填好。
+$('code').value = new URLSearchParams(location.search).get('c') ?? '';
+refresh();
+setInterval(() => refresh().catch(() => {}), 3000);
+</script>
+</body>
+</html>

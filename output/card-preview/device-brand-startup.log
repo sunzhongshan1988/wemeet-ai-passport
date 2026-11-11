@@ -1,0 +1,116 @@
+I (637) esp_image: segment 1: paddr=003b7e84 vaddr=3fc97e00 sizeESP-ROM:esp32c3-eco7-20230720
+Build:Jul 20 2023
+rst:0x15 (USB_UART_CHIP_RESET),boot:0xa (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40385d56
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fcd5830,len:0x1584
+load:0x403cbf10,len:0xc44
+load:0x403ce710,len:0x2ff8
+entry 0x403cbf1a
+I (24) boot: ESP-IDF v5.5.3 2nd stage bootloader
+I (24) boot: compile time Nov 11 2026 12:44:17
+I (24) boot: chip revision: v1.1
+I (25) boot: efuse block revision: v1.3
+I (25) boot.esp32c3: SPI Speed      : 80MHz
+I (25) boot.esp32c3: SPI Mode       : DIO
+I (25) boot.esp32c3: SPI Flash Size : 8MB
+I (25) boot: Enabling RNG early entropy source...
+I (25) boot: Partition Table:
+I (25) boot: ## Label            Usage          Type ST Offset   Length
+I (26) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (26) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (26) boot:  2 factory          factory app      00 00 00010000 007f0000
+I (26) boot: End of partition table
+I (26) esp_image: segment 0: paddr=00010020 vaddr=3c120020 size=3a7e5ch (3833436) map
+I (637) esp_image: segment 1: paddr=003b7e84 vaddr=3fc97e00 size=034fch ( 13564) load
+I (640) esp_image: segment 2: paddr=003bb388 vaddr=40380000 size=04c90h ( 19600) load
+I (644) esp_image: segment 3: paddr=003c0020 vaddr=42000020 size=11f588h (1176968) map
+I (831) esp_image: segment 4: paddr=004df5b0 vaddr=40384c90 size=12fech ( 77804) load
+I (846) esp_image: segment 5: paddr=004f25a4 vaddr=50000000 size=00020h (    32) load
+I (854) boot: Loaded app from partition at offset 0x10000
+I (854) boot: Disabling RNG early entropy source...
+I (855) cpu_start: Unicore app
+I (863) cpu_start: Pro cpu start user code
+I (863) cpu_start: cpu freq: 160000000 Hz
+I (863) app_init: Application information:
+I (863) app_init: Project name:     FoloToy-AI-Passport
+I (864) app_init: App version:      0.1.0
+I (864) app_init: Compile time:     Nov 11 2026 15:37:51
+I (864) app_init: ELF file SHA256:  468f4b244...
+I (864) app_init: ESP-IDF:          v5.5.3
+I (864) efuse_init: Min chip rev:     v0.3
+I (864) efuse_init: Max chip rev:     v1.99 
+I (864) efuse_init: Chip rev:         v1.1
+I (864) heap_init: Initializing. RAM available for dynamic allocation:
+I (865) heap_init: At 3FCB3F40 len 0000C0C0 (48 KiB): RAM
+I (865) heap_init: At 3FCC0000 len 0001C710 (113 KiB): Retention RAM
+I (865) heap_init: At 3FCDC710 len 0000294C (10 KiB): Retention RAM
+I (865) heap_init: At 50000020 len 00001FC8 (7 KiB): RTCRAM
+I (866) spi_flash: detected chip: generic
+I (866) spi_flash: flash io: dio
+I (867) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (867) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (868) main_task: Started on CPU0
+I (868) main_task: Calling app_main()
+I (868) main: WeMeet Passport 启动
+I (869) bsp_i2c: I2C 就绪 SDA=GPIO10 SCL=GPIO7
+I (1000) bsp_disp: 背光 LEDC 就绪 gpio=21
+I (1000) bsp_disp: 显示就绪 240x320
+I (1001) LVGL: Starting LVGL task
+I (1034) bsp_lvgl: LVGL 就绪，全局圆角=30，外部填充=黑色
+I (1035) button: IoT Button Version: 4.2.0
+I (1035) bsp_btn: 按键就绪:ADC1_CH0 三键分压,短按 180ms 长按 500ms
+I (1043) ES8311: Work in Slave mode
+I (1047) bsp_audio: ES8311 就绪
+I (1048) bsp_batt: 检测到 CW2017 VERSION=0x0F
+I (1085) bsp_batt: 万锂新能源 500mAh profile2 XIL40X 20261020 已匹配
+I (1185) bsp_batt: CW2017 ready: SOC=100%, voltage=4177 mV
+I (1192) ES8311: Codec hardware closed
+I (1200) bsp_audio: ES8311 已进入低功耗状态并通过寄存器校验
+I (1208) pp: pp rom version: 74f9620
+I (1209) net80211: net80211 rom version: 74f9620
+I (1210) wifi:wifi driver task: 3fcc964c, prio:23, stack:6656, core=0
+I (1214) wifi:wifi firmware version: 4df78f2
+I (1215) wifi:wifi certification version: v7.0
+I (1215) wifi:config NVS flash: enabled
+I (1215) wifi:config nano formatting: disabled
+I (1215) wifi:Init data frame dynamic rx buffer num: 32
+I (1215) wifi:Init static rx mgmt buffer num: 5
+I (1215) wifi:Init management short buffer num: 32
+I (1216) wifi:Init dynamic tx buffer num: 32
+I (1216) wifi:Init static tx FG buffer num: 2
+I (1216) wifi:Init static rx buffer size: 1600
+I (1216) wifi:Init static rx buffer num: 10
+I (1216) wifi:Init dynamic rx buffer num: 32
+I (1218) wifi_init: rx ba win: 6
+I (1218) wifi_init: accept mbox: 6
+I (1218) wifi_init: tcpip mbox: 32
+I (1218) wifi_init: udp mbox: 6
+I (1218) wifi_init: tcp mbox: 6
+I (1218) wifi_init: tcp tx win: 5760
+I (1218) wifi_init: tcp rx win: 5760
+I (1219) wifi_init: tcp mss: 1440
+I (1219) wifi_init: WiFi IRAM OP enabled
+I (1219) wifi_init: WiFi RX IRAM OP enabled
+I (1219) wm_app: 设备 WM-98C377F55508,固件 0.1.0,已配网,已绑定
+W (1354) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1355) phy_init: phy_version 1232,d493f299,Aug 25 2025,19:01:20
+I (1404) wifi:mode : sta (98:c3:77:f5:55:08)
+I (1404) wifi:enable tsf
+I (1408) main: 就绪:Button=1 Audio=1 Battery=1
+I (1516) main_task: Returned from app_main()
+I (3923) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0
+I (3924) wifi:state: init -> auth (0xb0)
+I (3941) wifi:state: auth -> assoc (0x0)
+I (3951) wifi:state: assoc -> run (0x10)
+I (3981) wifi:connected with wemeet-live, aid = 1, channel 1, BW20, bssid = 24:cf:24:f0:c4:fd
+I (3982) wifi:security: WPA2-PSK, phy: bgn, rssi: -30
+I (3982) wifi:pm start, type: 1
+
+I (3982) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (3983) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (4002) wifi:<ba-add>idx:0 (ifx:0, 24:cf:24:f0:c4:fd), tid:6, ssn:2, winSize:64
+I (4058) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (5681) esp_netif_handlers: sta ip: 192.168.31.49, mask: 255.255.255.0, gw: 192.168.31.1
+I (6519) wifi:<ba-add>idx:1 (ifx:0, 24:cf:24:f0:c4:fd), tid:0, ssn:0, winSize:64

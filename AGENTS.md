@@ -54,9 +54,10 @@ retain the separate authorization requirements for flashing, Git writes, and pub
 | Application workflow or core skill setup | `skills/README.md`; ensure the five required skills are available, then use only the matching skill |
 | Environment bootstrap or missing toolchain | `docs/development/engineering/environment-setup.md` |
 | BSP, pins, buses, display, audio, battery | `docs/hardware-design/AI_HARDWARE_DEVELOPMENT_GUIDE.md`, `components/bsp/include/bsp_pins.h` |
-| Demo or menu | `main/demo.h`, `main/main.c`, the nearest `main/demo_*.c` implementation |
+| WeMeet application: pages, keys, state machine | `docs/wemeet/README.md`, `main/wm_app.c`, `main/wm_ui.h` |
+| Sonic commands, binding, or cloud API | `docs/wemeet/README.md`, `main/wm_sonic.h`, `main/wm_proto.h`, `main/wm_cloud.h`, `web/sonic/`, `tools/wm_mock_server.mjs` |
 | Chinese UI text or fonts | `docs/development/engineering/lvgl-chinese-fonts.md`, the application's font assets, configuration, and widget styles |
-| Wi-Fi connection or Bluetooth provisioning | `docs/development/engineering/wifi-provisioning.md`, the referenced `demo/blufi-provisioning` implementation |
+| Wi-Fi connection | `main/wm_net.h` (this firmware provisions over sound, not Bluetooth; `docs/development/engineering/wifi-provisioning.md` describes the upstream BLUFI reference only) |
 | Build, test, dependencies, partitions | `docs/development/engineering/build-and-test.md`, `docs/development/engineering/firmware-layout.md`, `sdkconfig.defaults`, `partitions.csv` |
 | CI or release | the matching file in `docs/development/ci/CI-*.md` and `.github/workflows/` |
 | Project completion | `docs/development/release/project-completion.md` (then the `issue-suggestions` or `experience-pr` skill) |

@@ -1,0 +1,26 @@
+menu "WeMeet Passport"
+
+    config WM_API_BASE
+        string "WeMeet Next server base URL"
+        default "https://api.wemeet.example"
+        help
+            Base URL of the WeMeet Next backend, without a trailing slash. The device
+            calls <base>/device/v1/... (see docs/wemeet/device-api.md).
+            Can be overridden per device at runtime with the sonic SERVER command,
+            e.g. to point a development unit at tools/wm_mock_server.mjs.
+
+    config WM_PAIR_URL_BASE
+        string "Pairing page URL shown as QR code"
+        default "https://wemeet.example/d"
+        help
+            The fallback pairing screen shows a QR code for <this>?c=<code>.
+            The server may override it in the pairing response (field "url").
+
+    config WM_SYNC_INTERVAL_SEC
+        int "Default cloud sync interval (seconds)"
+        range 5 3600
+        default 30
+        help
+            Used until the server sends nextPollSec in a sync response.
+
+endmenu
